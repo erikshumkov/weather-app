@@ -1,16 +1,16 @@
 import React from 'react';
 
-const History = ({ storageLocation, getHistoryLocation, clearStorage }) => (
+const History = ({ getHistoryLocation, clearStorage, location }) => (
   <div className='history-comp'>
     <ul className='latest-search-list'>
-      {storageLocation.map((item, i) => (
+      {location.map((item, i) => (
         <li
           className='latest-search-li'
           key={i}
           onClick={getHistoryLocation}
           value={i}
         >
-          {item}
+          {item.city}
         </li>
       ))}
     </ul>

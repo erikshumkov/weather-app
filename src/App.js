@@ -11,19 +11,31 @@ import Search from './components/layout/Search';
 import History from './components/layout/History';
 import Footer from './components/layout/Footer';
 import Icon from './components/layout/Icon';
-import Loader from './components/pages/Loader';
+
+// Full page loader
+// import Loader from './components/pages/Loader';
+
+// IMPROVEMENTS
+
+// Select with mouseclick on google search when suggestion is active.
+
+// Get position of user and use the weather for that particular place.
+// If he allows it, else get random city.
+
+// localStorage code is ugly, fix that. X
+// + error first launch on github.
 
 const Skycons = require('skycons')(window);
 const skycons = new Skycons({ color: '#fff' });
 
 function App() {
-  const [isLoading, setisLoading] = useState(true);
+  // Full screen loader
+  // const [isLoading, setisLoading] = useState(true);
   const [showHistoryList, setShowHistoryList] = useState(false);
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState([]);
-  const [storageLocation, setStorageLocation] = useState([]);
-  const [storageLatLng, setStorageLatLng] = useState([]);
+  const [location, setLocation] = useState([]);
   const [coordinates, setCoordinates] = useState({
     lat: '58.41086',
     lng: '15.62157'
@@ -37,37 +49,36 @@ function App() {
     setAddress(value);
     setCoordinates(latLng);
     if (address) {
-      const nextState = [address, ...storageLocation];
-      const cord = [latLng, ...storageLatLng];
-      localStorage.setItem('places', JSON.stringify(nextState));
-      localStorage.setItem('cord', JSON.stringify(cord));
-      setStorageLocation(nextState);
-      setStorageLatLng(cord);
+      const loc = [
+        { city: address, lat: latLng.lat, lng: latLng.lng },
+        ...location
+      ];
+      localStorage.setItem('location', JSON.stringify(loc));
+      setLocation(loc);
       setCity(address);
       setAddress('');
     }
   };
 
   const clearStorage = () => {
-    storageLocation.splice(0);
-    storageLatLng.splice(0);
+    location.splice(0);
     localStorage.clear();
     setCoordinates({ lat: '58.41086', lng: '15.62157' });
   };
 
   const getHistoryLocation = ({ currentTarget }) => {
-    setCoordinates(storageLatLng[currentTarget.value]);
-    setCity(storageLocation[currentTarget.value]);
+    setCoordinates({
+      lat: location[currentTarget.value].lat,
+      lng: location[currentTarget.value].lng
+    });
+    setCity(location[currentTarget.value].city);
   };
 
   useEffect(() => {
-    if (localStorage.length > 0) {
-      const getStorage = localStorage.getItem('places');
-      const getStorage2 = localStorage.getItem('cord');
+    if (localStorage.location !== undefined) {
+      const getStorage = localStorage.getItem('location');
       const parseStorage = JSON.parse(getStorage);
-      const parseStorage2 = JSON.parse(getStorage2);
-      setStorageLocation(parseStorage);
-      setStorageLatLng(parseStorage2);
+      setLocation(parseStorage);
     }
     axios
       .get(
@@ -77,9 +88,11 @@ function App() {
         setWeather(res.data.currently);
         skycons.set(skyconsRef.current, res.data.currently.icon);
         skycons.play();
-        setTimeout(() => {
-          setisLoading(false);
-        }, 1500);
+
+        // Full page intro loader
+        // setTimeout(() => {
+        //   setisLoading(false);
+        // }, 1500);
       })
       .catch(error => {
         console.log(error);
@@ -89,7 +102,9 @@ function App() {
   return (
     <div className='App'>
       <div className='wrapper'>
-        {isLoading ? <Loader /> : null}
+        {/* Full page intro loader 
+        {isLoading ? <Loader /> : null} */}
+
         <Header coordinates={coordinates} city={city} />
 
         <Icon
@@ -118,9 +133,9 @@ function App() {
 
         {showHistoryList ? (
           <History
-            storageLocation={storageLocation}
             getHistoryLocation={getHistoryLocation}
             clearStorage={clearStorage}
+            location={location}
           />
         ) : null}
       </div>
