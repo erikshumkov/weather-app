@@ -6,39 +6,35 @@ import './App.css';
 
 import apiKey from './config';
 import Header from './components/layout/Header';
+import Icon from './components/layout/Icon';
 import Stats from './components/layout/Stats';
 import Search from './components/layout/Search';
 import History from './components/layout/History';
 import Footer from './components/layout/Footer';
-import Icon from './components/layout/Icon';
 
 // Full page loader
-// import Loader from './components/pages/Loader';
+import Loader from './components/pages/Loader';
 
 // IMPROVEMENTS
-
-// Select with mouseclick on google search when suggestion is active.
-
-// Get position of user and use the weather for that particular place.
-// If he allows it, else get random city.
-
-// localStorage code is ugly, fix that. X
-// + error first launch on github.
+//  - Style app, media queries
+//  - Full page loader, add opacity transition when loader turns false.
+//  - Favorites
+//  - Pre determined saved locations 3 big cities
 
 const Skycons = require('skycons')(window);
 const skycons = new Skycons({ color: '#fff' });
 
-function App() {
+const App = () => {
   // Full screen loader
-  // const [isLoading, setisLoading] = useState(true);
+  const [isLoading, setisLoading] = useState(true);
   const [showHistoryList, setShowHistoryList] = useState(false);
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState([]);
   const [location, setLocation] = useState([]);
   const [coordinates, setCoordinates] = useState({
-    lat: '58.41086',
-    lng: '15.62157'
+    lat: '59.32932',
+    lng: '18.06858'
   });
 
   const skyconsRef = useRef();
@@ -47,15 +43,15 @@ function App() {
     const results = await geocodeByAddress(value);
     const latLng = await getLatLng(results[0]);
     setAddress(value);
+    setCity(value);
     setCoordinates(latLng);
     if (address) {
       const loc = [
-        { city: address, lat: latLng.lat, lng: latLng.lng },
+        { city: value, lat: latLng.lat, lng: latLng.lng },
         ...location
       ];
       localStorage.setItem('location', JSON.stringify(loc));
       setLocation(loc);
-      setCity(address);
       setAddress('');
     }
   };
@@ -63,7 +59,7 @@ function App() {
   const clearStorage = () => {
     location.splice(0);
     localStorage.clear();
-    setCoordinates({ lat: '58.41086', lng: '15.62157' });
+    setCoordinates({ lat: '59.32932', lng: '18.06858' });
   };
 
   const getHistoryLocation = ({ currentTarget }) => {
@@ -90,9 +86,9 @@ function App() {
         skycons.play();
 
         // Full page intro loader
-        // setTimeout(() => {
-        //   setisLoading(false);
-        // }, 1500);
+        setTimeout(() => {
+          setisLoading(false);
+        }, 1500);
       })
       .catch(error => {
         console.log(error);
@@ -102,8 +98,8 @@ function App() {
   return (
     <div className='App'>
       <div className='wrapper'>
-        {/* Full page intro loader 
-        {isLoading ? <Loader /> : null} */}
+        {/* Full page intro loader  */}
+        {isLoading ? <Loader /> : null}
 
         <Header coordinates={coordinates} city={city} />
 
@@ -142,6 +138,6 @@ function App() {
       <Footer />
     </div>
   );
-}
+};
 
 export default App;

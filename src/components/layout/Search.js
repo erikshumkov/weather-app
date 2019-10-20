@@ -18,7 +18,9 @@ const Search = ({ address, setAddress, handleSelect }) => (
           <div className='google-ul'>
             {suggestions.map(suggestion => {
               const style = {
-                backgroundColor: suggestion.active ? '#41b6e6' : '#000'
+                backgroundColor: suggestion.active
+                  ? '#41b6e6'
+                  : 'rgb(56, 56, 56)'
               };
 
               return (
